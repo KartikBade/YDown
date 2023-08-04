@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">YDown</string>
+    <string name="enter_video_link">Enter YouTube video link</string>
+    <string name="search">Search</string>
+    <string name="quality">Quality</string>
+    <string name="format">Format</string>
+    <string name="download">Download</string>
+    <string name="download_button">Download Button</string>
+    <string name="empty_list_icon">Empty List Icon</string>
+    <string name="tv_empty_main_quality_rv_text">Enter a youtube video link to download it for free!</string>
+</resources>
