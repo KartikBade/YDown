@@ -81,6 +81,9 @@ dependencies {
     //Dagger
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
+
+    //WorkManager with Coroutines
+    implementation "androidx.work:work-runtime-ktx:2.8.1"
 }
 kapt {
     correctErrorTypes true
