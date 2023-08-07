@@ -11,6 +11,7 @@ import com.example.ydown.R
 import com.example.ydown.repositories.PythonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import kotlin.random.Random
 
 class DownloadWorker(
@@ -19,13 +20,18 @@ class DownloadWorker(
 ): CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
+        val link = inputData.getString("link")
         val position = inputData.getInt("position", -1)
-        Log.e("DownloadWorker", "Inside download worker: $position")
+        val destination = inputData.getString("destination")
+
         startForegroundService()
         return withContext(Dispatchers.IO) {
             try {
-                Log.e("DownloadWorker", "Inside try block")
-                PythonRepository(context).downloadVideo(position)
+                if (link != null && destination != null) {
+                    PythonRepository(context).downloadVideo(link, position, destination)
+                } else {
+                    throw IOException("Link or Destination was null.")
+                }
             } catch (e: Exception) {
                 e.localizedMessage?.let { Log.e("DownloadWorker", it) }
                 return@withContext Result.failure(

@@ -1,5 +1,6 @@
 package com.example.ydown.viewmodels
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,16 +15,11 @@ class MainViewModel(
 ): ViewModel() {
 
     var qualityList: MutableLiveData<List<PyObject>> = MutableLiveData()
+    var link: String = ""
 
     fun getQualityList() {
         viewModelScope.launch {
-            qualityList.value = pythonRepository.getQualityList()
-        }
-    }
-
-    fun downloadVideo(position: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            pythonRepository.downloadVideo(position)
+            qualityList.value = pythonRepository.getQualityList(link)
         }
     }
 }
