@@ -3,6 +3,7 @@ package com.example.ydown.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
@@ -11,6 +12,7 @@ import com.example.ydown.databinding.ActivityMainBinding
 import com.example.ydown.repositories.PythonRepository
 import com.example.ydown.viewmodels.MainViewModel
 import com.example.ydown.viewmodels.MainViewModelProviderFactory
+import com.example.ydown.viewmodels.Status
 import com.example.ydown.workmanager.DownloadWorker
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -34,12 +36,9 @@ class MainActivity : AppCompatActivity() {
 
         val action = intent.action
         val type = intent.type
-        if ("android.intent.action.SEND" == action && type != null && "text/plain" == type) {
-            Log.e("MainActivity", "${ intent.getStringExtra("android.intent.extra.TEXT") }")
-            intent.getStringExtra("android.intent.extra.TEXT")?.let {
-                mainViewModel.link = it
-                mainViewModel.getQualityList()
-            }
+        val link = intent.getStringExtra("android.intent.extra.TEXT")
+        if ("android.intent.action.SEND" == action && type != null && "text/plain" == type && link != null) {
+            mainViewModel.checkForIntents(link)
         }
 
         val workManager = WorkManager.getInstance(applicationContext)
@@ -66,6 +65,34 @@ class MainActivity : AppCompatActivity() {
             if (it.isEmpty()) { binding.ivEmptyMainQualityRv.visibility = View.VISIBLE }
             else { binding.ivEmptyMainQualityRv.visibility = View.GONE }
             qualityListAdapter.submitList(it)
+        }
+
+        mainViewModel.status.observe(this) {
+            when (it) {
+                Status.LOADING -> {
+                    binding.ivEmptyMainQualityRv.setImageResource(com.example.ydown.R.drawable.loading_animation)
+                    binding.ivEmptyMainQualityRv.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    binding.ivEmptyMainQualityRv.setImageResource(com.example.ydown.R.drawable.y_down_empty_main_list)
+                    binding.ivEmptyMainQualityRv.visibility = View.VISIBLE
+                    Toast.makeText(this, "Unknown Error Occurred!", Toast.LENGTH_SHORT).show()
+                }
+                Status.DONE -> {
+                    if (mainViewModel.qualityList.value?.isEmpty() == false) {
+                        binding.ivEmptyMainQualityRv.visibility = View.GONE
+                    }
+                    else {
+                        binding.ivEmptyMainQualityRv.setImageResource(com.example.ydown.R.drawable.y_down_empty_main_list)
+                        binding.ivEmptyMainQualityRv.visibility = View.VISIBLE
+                        Toast.makeText(this, "No downloads available.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else -> {
+                    binding.ivEmptyMainQualityRv.setImageResource(com.example.ydown.R.drawable.y_down_empty_main_list)
+                    binding.ivEmptyMainQualityRv.visibility = View.VISIBLE
+                }
+            }
         }
 
         binding.ivSearch.setOnClickListener {

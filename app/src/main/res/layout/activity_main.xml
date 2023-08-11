@@ -61,8 +61,7 @@
             android:layout_height="0dp"
             android:layout_margin="100dp"
             android:layout_weight="1"
-            android:contentDescription="@string/empty_list_icon"
-            android:src="@drawable/y_down_empty_main_list" />
+            android:contentDescription="@string/empty_list_icon" />
 
     </LinearLayout>
 

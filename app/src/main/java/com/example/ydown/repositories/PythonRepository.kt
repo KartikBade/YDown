@@ -18,8 +18,11 @@ class PythonRepository(context: Context) {
     private val yt = module["yt"]
     private val download = module["download"]
 
-    fun getQualityList(link: String): List<PyObject>? {
-        return yt?.call(link)?.asList()
+    fun getQualityList(link: String): List<PyObject> {
+        yt?.call(link)?.asList()?.let {
+            return it
+        }
+        return emptyList()
     }
 
     fun downloadVideo(link: String, position: Int, destination: String) {
